@@ -1,9 +1,6 @@
 import os
-import sys
 from dotenv import load_dotenv
-
 import boto3
-from boto3.s3.transfer import TransferConfig
 
 load_dotenv()
 
@@ -17,3 +14,8 @@ s3_client = boto3.client(
     aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
     region_name=AWS_DEFAULT_REGION
 )
+
+def test():
+    s3_client.list_buckets()
+
+test()

@@ -12,7 +12,9 @@ import os
 from .s3_manager import s3_client
 from .autonode import node_wrapper, validate, get_node_names_mappings
 
-s3_client: boto3.client = None
+logger = logging.getLogger("s3_utils")
+
+s3_client: boto3.client = s3_client
 
 class ProgressPercentage:
     def __init__(self, file_size):
@@ -33,7 +35,7 @@ class ProgressPercentage:
 
 def get_lora_from_s3(bucket_name: str, object_key: str, save_path: str) -> bool:
     try:
-        logging.info(f"Fetching LoRA from S3: {bucket_name}/{object_key} to {save_path}")
+        logger.info(f"Fetching LoRA from S3: {bucket_name}/{object_key} to {save_path}")
 
         response = s3_client.head_object(Bucket=bucket_name, Key=object_key)
         file_size = response['ContentLength']
@@ -45,10 +47,10 @@ def get_lora_from_s3(bucket_name: str, object_key: str, save_path: str) -> bool:
             Callback=ProgressPercentage(file_size)
         )
         elapsed_time = time.time() - start_time
-        logging.info(f"Successfully saved LoRA file to {save_path} in {elapsed_time:.2f} seconds.")
+        logger.info(f"Successfully saved LoRA file to {save_path} in {elapsed_time:.2f} seconds.")
         return True
     except Exception as e:
-        logging.error(f"Error fetching LoRA from S3: {e}")
+        logger.error(f"Error fetching LoRA from S3: {e}")
         return False
 
 def get_full_path_simulate(folder_name: str, filename: str) -> Tuple[str, bool]:
